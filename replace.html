@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SQL Query Parameter Mapping</title>
+<script type="text/javascript">
+function replaceQueryParameters() {
+    var originalQuery = document.getElementById("originalQuery").value;
+    var parameters = document.getElementById("parameters").value;
+    
+    var paramArray = parameters.split(',').map(function(param) {
+        param = param.trim();
+        var value = param.substring(0, param.indexOf('(')).trim();
+        var type = param.substring(param.indexOf('(') + 1, param.indexOf(')')).trim();
+        return {
+            value: value,
+            type: type
+        };
+    });
+    
+    var index = 0;
+    var resultQuery = originalQuery.replace(/\?/g, function() {
+        if (index >= paramArray.length) return '?';
+        
+        var param = paramArray[index++];
+        
+        if(param.value === "" && param.type === "") {
+            return null; // null
+        } else if (param.type === 'String') {
+            return "'" + param.value + "'";
+        } else {
+            return param.value;
+        }
+    });
+    
+    document.getElementById("resultQuery").value = resultQuery;
+}
+
+function autoResize(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+}
+</script>
+<style>
+.container {
+    margin: 20px;
+    font-family: Arial, sans-serif;
+}
+.textarea-label {
+    font-weight: bold;
+    margin: 10px 0;
+}
+.query-textarea {
+    width: 100%;
+    min-height: 100px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+.button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px 0;
+}
+.button:hover {
+    background-color: #45a049;
+}
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="textarea-label">Query</div>
+        <textarea id="originalQuery" class="query-textarea" 
+                  oninput="autoResize(this)" 
+                  placeholder="input query"></textarea>
+        
+        <div class="textarea-label">Parameters</div>
+        <textarea id="parameters" class="query-textarea" 
+                  oninput="autoResize(this)" 
+                  placeholder="Example: data1(String), data2(String), data3(Integer), data4(Integer)"></textarea>
+        
+        <button class="button" onclick="replaceQueryParameters()">Change</button>
+        
+        <div class="textarea-label">result Query</div>
+        <textarea id="resultQuery" class="query-textarea" 
+                  readonly 
+                  placeholder=""></textarea>
+    </div>
+</body>
+</html>
