@@ -1,2 +1,2 @@
 # SQL_QPM
-SQL Query Parameter Mapping
+Parses the string , against ? and substitutes it into ? to create the query
